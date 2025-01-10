@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MathView: View {
+    @Environment(\.dismiss) var dismiss
     let selectedTable: Int
     
     @State private var answer = ""
@@ -33,61 +34,105 @@ struct MathView: View {
     }
     
     var body: some View {
-        VStack {
-            Text("Score: \(userScore)")
-                .font(.largeTitle.weight(.heavy).lowercaseSmallCaps())
-                .foregroundColor(.secondary)
+        ZStack {
+//            pastelGradient
+//                .ignoresSafeArea()
+            //            rectangle
             
-            ZStack {
-
-                Rectangle()
-                    .frame(width: UIScreen.main.bounds.width - 30, height: 400)
-                    .foregroundColor(.orange)
-                    .opacity(0.4)
-                    .shadow(radius: 10)
-                    .cornerRadius(20)
+            VStack {
+                Spacer()
+                Text("Score: \(userScore)")
+                    .font(.largeTitle.weight(.heavy).lowercaseSmallCaps())
+                    .foregroundColor(.secondary)
                 
-                VStack {
+                ZStack {
                     
-                    HStack(spacing: 10) {
-                        Spacer()
-                        Image("\(currentQuestion?.multiplicand ?? 2)")
-                        Image("times")
-                        Image("\(currentQuestion?.multiplier ?? 2)")
-                    Spacer()
-                    }
-                    .frame(alignment: .bottom)
-                    .padding(.bottom)
+                    Rectangle()
+                        .frame(width: UIScreen.main.bounds.width - 50, height: 350)
+                        .foregroundColor(Color(lightBlue))
+                        .opacity(0.7)
+                        .shadow(radius: 10)
+                        .cornerRadius(20)
                     
-                    TextField("0", text: $answer)
+                    VStack {
+                        
+                        HStack(spacing: 5) {
+                            Spacer()
+                            Image("\(currentQuestion?.multiplicand ?? 2)")
+                                .resizable()
+                                .frame(width: 80, height: 80)
+                                .modifier(NumberImage())
+                            Image("times")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .modifier(NumberImage())
+                            Image("\(currentQuestion?.multiplier ?? 2)")
+                                .resizable()
+                                .frame(width: 80, height: 80)
+                                .modifier(NumberImage())
+//                            Image("equal")
+//                                .resizable()
+//                                .frame(width: 40, height: 40)
+//                                .modifier(NumberImage())
+                            Spacer()
+                        }
+                        .frame(alignment: .bottom)
+                        .padding(.bottom,30)
+                        
+                        
+                        TextField("0", text: $answer)
                             .keyboardType(.numberPad)
+                            .multilineTextAlignment(.center)
                             .frame(width: 100)
                             .textFieldStyle(.roundedBorder)
                             .font(.system(size: 50))
                             .padding()
-                    
-                    Text("Enter your answer")
-                        .foregroundColor(.secondary)
-                        .font(.title3.smallCaps().weight(.heavy))
-                        .opacity(0.4)
-                    
+                        
+                        Text("Enter your answer")
+                            .foregroundColor(.secondary)
+                            .font(.title3.smallCaps().weight(.heavy))
+                            .opacity(0.4)
+                        
+                    }
                 }
+                .padding()
+                
+                Spacer()
+                
+                Button("Check Answer") {}
+                    .frame(width: 250, height: 60)
+                    .modifier(ButtonStyle())
+                
+                Spacer()
+                
+                //            MARK: - Navigation
+                    .navigationTitle("")
+                    .navigationBarBackButtonHidden(true)
+                    .toolbar {
+                        
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Text("\(selectedTable)x Table")
+                                .padding()
+                                .font(.title2.weight(.bold))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(action: {
+                                // Custom action to dismiss the view
+                                dismiss()
+                            }) {
+                                Image(systemName: "multiply") // Custom icon
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.gray)
+                                    .padding()
+                            }
+                        }
+                    }
+                
+                
             }
-            .padding()
-
-            
-            Button("Check Answer") {}
-                .frame(width: 250, height: 60)
-                .modifier(ButtonStyle())
-            
-//            MARK: - Navigation
-                .navigationTitle("\(selectedTable)x Table")
-                .navigationBarTitleDisplayMode(.inline)
-//                .toolbar {
-//                    ToolbarItem(placement: .topBarTrailing) {
-//                        Text("Score: \(userScore)")
-//                    }
-//                }
         }
     }
 }
