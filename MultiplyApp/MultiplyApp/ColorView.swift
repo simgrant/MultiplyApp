@@ -34,7 +34,7 @@ struct ColorView: View {
                         
                         Image("\(colors.firstIndex(of: color)! + 2)")
                             .resizable()
-                            .frame(width: 50, height: 50, alignment: .center)
+                            .frame(width: 45, height: 45, alignment: .center)
                             .modifier(NumberImage())
                             
                         
