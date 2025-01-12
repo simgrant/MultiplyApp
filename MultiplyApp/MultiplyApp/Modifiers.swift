@@ -24,7 +24,7 @@ struct ButtonStyle: ViewModifier {
             .foregroundColor(.white)
             .font(.title.weight(.bold).smallCaps())
             .cornerRadius(20)
-            .shadow(color: .white, radius: 3)
+            .shadow(radius: 3)
     }
 }
 

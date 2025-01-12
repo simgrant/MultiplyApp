@@ -41,3 +41,13 @@ var pale: Color {
     Color(red: 246/255, green: 246/255, blue: 246/255)
 }
 
+var softYellow: Color {
+//    rgb(246, 229, 141)
+    Color(red: 246/255, green: 229/255, blue: 141/255)
+}
+
+
+var brownRose: Color {
+//    rgb(212, 165, 165)
+    Color(red: 212/255, green: 165/255, blue: 165/255)
+}

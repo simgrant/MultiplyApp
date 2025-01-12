@@ -10,13 +10,20 @@ import SwiftUI
 struct MathView: View {
     @Environment(\.dismiss) var dismiss
     let selectedTable: Int
+    let totalQuestions = 2
     
+    @State private var currentQuestionIndex = 0
     @State private var answer = ""
+    @State private var isCorrect = false
+    @State private var correctAnswers = 0
     @State private var userScore = 0
     @State private var currentQuestion: Question? = nil
     @State private var showAlert = false
-    @State private var title = ""
+    @State private var showFeedback = false
+    @State private var showFinalScore = false
+    @State private var title = "Incorrect"
     @State private var message = ""
+    @State private var isQuestionAnswered = false
     
     var question: Question {
         return Question(multiplicand: selectedTable, multiplier: Int.random(in: 2...12))
@@ -24,47 +31,74 @@ struct MathView: View {
     
     func checkAnswer() {
         if let userAnswer = Int(answer), userAnswer == currentQuestion?.product {
-            userScore += 2
-            title = "Correct"
-            message = "Keep up the great work!"
+            correctAnswers += 1
+            isCorrect = true
+            showAlert = false
         } else {
-            title = "Incorrect"
             message = "The answer is \(currentQuestion?.product ?? 0)"
+            isCorrect = false
+            showAlert = true
         }
+        showFeedback = true
+        isQuestionAnswered = true
+    }
+    
+    func nextQuestion() {
+        isQuestionAnswered = false
+        currentQuestion = question
+        currentQuestionIndex += 1
+        userScore = (correctAnswers / currentQuestionIndex) * 100
+        answer = ""
+        showFeedback = false
     }
     
     var body: some View {
         ZStack {
-        
+            
             VStack {
+                
+                ProgressView("", value: Double(currentQuestionIndex), total: Double(totalQuestions))
+                    .progressViewStyle(.linear)
+                    .frame(height: 20)
+                    .accentColor(Color(lightBlue))
+                    .padding()
                 Spacer()
-                scoreView
                 
                 ZStack {
                     cardView
                     
                     VStack {
                         questionView
-                        .frame(alignment: .bottom)
-                        .padding(.bottom,30)
+                            .frame(alignment: .bottom)
+                            .padding(.bottom,30)
                         
-                        answerField
+                        HStack(spacing: 30) {
+                            if showFeedback {
+                                if !isCorrect {
+                                    incorrectView
+                                }
+                            }
+                            answerField
+                            if showFeedback {
+                                if isCorrect {
+                                    correctView
+                                }
+                            }
+                        }
                         answerFieldPrompt
                     }
                 }
                 .padding()
                 
                 Spacer()
-                
-                checkAnswerButton
-                
+                checkAnswerOrNextButton
                 Spacer()
+
                 
                 //            MARK: - Navigation
                     .navigationTitle("")
                     .navigationBarBackButtonHidden(true)
                     .toolbar {
-                        
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Text("\(selectedTable)x Table")
                                 .padding()
@@ -91,50 +125,52 @@ struct MathView: View {
                         currentQuestion = question
                     }
                     .alert(title, isPresented: $showAlert) {
-                        Button("OK", role: .cancel) { }
+                        Button("Continue") { }
                     } message: {
                         Text(message)
                     }
                 
-                
+                    .alert(isPresented: $showFinalScore) {
+                                Alert(
+                                    title: Text("Your Results"),
+                                    message: Text("Your score is \(Int(userScore))%."),
+                                    dismissButton: .default(Text("OK")) {
+                                        dismiss()
+                                    }
+                                )
+                            }
             }
         }
     }
-        //    MARK: - Custom Views
-        
-        private var scoreView: some View {
-            Text("Score: \(userScore)")
-                .font(.largeTitle.weight(.heavy).lowercaseSmallCaps())
-                .foregroundColor(.secondary)
+    //    MARK: - Custom Views
+    
+    private var cardView: some View {
+        Rectangle()
+            .frame(width: UIScreen.main.bounds.width / 1.2, height: 450)
+            .foregroundColor(Color(lightBlue))
+            .opacity(0.7)
+            .shadow(radius: 10)
+            .cornerRadius(20)
+    }
+    
+    private var questionView: some View {
+        HStack(spacing: 5) {
+            Spacer()
+            Image("\(selectedTable)")
+                .resizable()
+                .frame(width: 80, height: 80)
+                .modifier(NumberImage())
+            Image("times")
+                .resizable()
+                .frame(width: 40, height: 40)
+                .modifier(NumberImage())
+            Image("\(currentQuestion?.multiplier ?? 2)")
+                .resizable()
+                .frame(width: 80, height: 80)
+                .modifier(NumberImage())
+            Spacer()
         }
-        
-        private var cardView: some View {
-            Rectangle()
-                .frame(width: UIScreen.main.bounds.width - 50, height: 350)
-                .foregroundColor(Color(lightBlue))
-                .opacity(0.7)
-                .shadow(radius: 10)
-                .cornerRadius(20)
-        }
-        
-        private var questionView: some View {
-            HStack(spacing: 5) {
-                Spacer()
-                Image("\(selectedTable)")
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .modifier(NumberImage())
-                Image("times")
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .modifier(NumberImage())
-                Image("\(currentQuestion?.multiplier ?? 2)")
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .modifier(NumberImage())
-                Spacer()
-            }
-        }
+    }
     
     private var answerField: some View {
         TextField("0", text: $answer)
@@ -144,7 +180,7 @@ struct MathView: View {
             .textFieldStyle(.roundedBorder)
             .font(.system(size: 50))
             .padding()
- 
+        
     }
     
     private var answerFieldPrompt: some View {
@@ -154,20 +190,34 @@ struct MathView: View {
             .opacity(0.4)
     }
     
-    private var checkAnswerButton: some View {
+    private var checkAnswerOrNextButton: some View {
         Button(action: {
-            checkAnswer()
-            //generate new question
-            currentQuestion = question
-            answer = ""
-            showAlert = true
+            if isQuestionAnswered {
+                nextQuestion()
+            } else {
+                checkAnswer()
+                
+                if currentQuestionIndex == totalQuestions {
+                    showAlert = false
+                    showFinalScore = true
+                }
+            }
         }) {
-            Text("Check Answer")
-                .frame(width: 250, height: 60)
+            Text(isQuestionAnswered ? "Next Question": "Check Answer")
+                .frame(width: 220, height: 60)
                 .modifier(ButtonStyle())
         }
     }
-
+    
+    private var incorrectView: some View {
+        Image("incorrect")
+            .frame(width: 15, height: 15)
+    }
+    
+    private var correctView: some View {
+        Image("correct")
+            .frame(width: 15, height: 15)
+    }
     
     
 }

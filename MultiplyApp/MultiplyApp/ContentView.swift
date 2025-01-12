@@ -34,7 +34,7 @@ struct ContentView: View {
                     //load selection
                     ColorView(selectedColor: $selectedColor, image: $image, selectedTable: $selectedTable)
                         .padding()
-                    Spacer()
+
                     
                     NavigationLink(destination: MathView(selectedTable: selectedTable)) {
                         startButton
@@ -73,10 +73,9 @@ struct ContentView: View {
     private var circleView: some View {
         Circle()
             .fill(selectedColor)
-//            .fill(.white.opacity(0.5))
             .frame(width: 190, height: 190, alignment: .center)
             .shadow(color: .white, radius: 5)
-            .opacity(0.7)
+            .opacity(0.8)
             .padding(.bottom)
     }
     
@@ -91,7 +90,7 @@ struct ContentView: View {
     //    MARK: - Start Button
     private var startButton: some View {
         Button("Start") {}
-            .frame(maxWidth: UIScreen.main.bounds.width - 150, minHeight: 30)
+            .frame(maxWidth: UIScreen.main.bounds.width / 2 , minHeight: 30)
             .modifier(ButtonStyle())
     }
     
