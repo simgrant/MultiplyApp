@@ -12,7 +12,7 @@ struct ColorView: View {
     @Binding var image: String
     @Binding var selectedTable: Int
     
-    let colors: [Color] = [Color(lightBlue), Color(pastelPink), Color(mustard), Color(lavender), Color(peachyRose), Color(softYellow), Color(brownRose),  .cyan, .purple, .orange, .brown, .teal]
+    let colors: [Color] = [Color(lightBlue), Color(pastelPink), Color(mustard), Color(lavender), Color(peachyRose), Color(softYellow), Color(brownRose), Color(peranoBlue), Color(peranoPurple), Color(charm), Color(casper), Color(butterfly)]
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),

@@ -46,8 +46,33 @@ var softYellow: Color {
     Color(red: 246/255, green: 229/255, blue: 141/255)
 }
 
-
 var brownRose: Color {
 //    rgb(212, 165, 165)
     Color(red: 212/255, green: 165/255, blue: 165/255)
+}
+
+var charm: Color {
+//    rgb(215, 106, 137)
+    Color(red: 215/255, green: 106/255, blue: 137/255)
+}
+
+var peranoBlue: Color {
+//    rgb(167, 211, 241)
+    Color(red: 167/255, green: 211/255, blue: 241/255)
+}
+
+
+var peranoPurple: Color {
+//    rgb(168, 162, 241)
+    Color(red: 168/255, green: 162/255, blue: 241/255)
+}
+    
+var butterfly: Color {
+//    rgb(107, 80, 139)
+    Color(red: 107/255, green: 80/255, blue: 139/255)
+}
+
+var casper: Color {
+//    rgb(164, 196, 208)
+    Color(red: 164/255, green: 196/255, blue: 208/255)
 }

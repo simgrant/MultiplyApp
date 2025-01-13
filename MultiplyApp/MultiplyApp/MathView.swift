@@ -21,9 +21,10 @@ struct MathView: View {
     @State private var showAlert = false
     @State private var showFeedback = false
     @State private var showFinalScore = false
-    @State private var title = "Incorrect"
+    @State private var title = ""
     @State private var message = ""
     @State private var isQuestionAnswered = false
+    @State private var isButtonDisabled = true
     
     var question: Question {
         return Question(multiplicand: selectedTable, multiplier: Int.random(in: 2...12))
@@ -35,6 +36,7 @@ struct MathView: View {
             isCorrect = true
             showAlert = false
         } else {
+            title = "Incorrect"
             message = "The answer is \(currentQuestion?.product ?? 0)"
             isCorrect = false
             showAlert = true
@@ -45,103 +47,104 @@ struct MathView: View {
     
     func nextQuestion() {
         isQuestionAnswered = false
+        showFeedback = false
         currentQuestion = question
         currentQuestionIndex += 1
         userScore = (correctAnswers / currentQuestionIndex) * 100
         answer = ""
-        showFeedback = false
     }
     
     var body: some View {
-        ZStack {
+        VStack {
+            ProgressView("", value: Double(currentQuestionIndex), total: Double(totalQuestions))
+                .progressViewStyle(.linear)
+                .frame(height: 20)
+                .accentColor(Color(lightBlue))
+                .padding()
+            Spacer()
             
-            VStack {
+            ZStack {
+                cardView
                 
-                ProgressView("", value: Double(currentQuestionIndex), total: Double(totalQuestions))
-                    .progressViewStyle(.linear)
-                    .frame(height: 20)
-                    .accentColor(Color(lightBlue))
-                    .padding()
-                Spacer()
-                
-                ZStack {
-                    cardView
+                VStack(spacing: 20) {
+                    questionView
+                        .frame(alignment: .bottom)
+                        .padding(.bottom,30)
                     
-                    VStack {
-                        questionView
-                            .frame(alignment: .bottom)
-                            .padding(.bottom,30)
-                        
-                        HStack(spacing: 30) {
-                            if showFeedback {
-                                if !isCorrect {
-                                    incorrectView
-                                }
-                            }
-                            answerField
-                            if showFeedback {
-                                if isCorrect {
-                                    correctView
-                                }
+                    HStack(spacing: 30) {
+                        if showFeedback {
+                            if !isCorrect {
+                                incorrectView
                             }
                         }
-                        answerFieldPrompt
+                        answerField
+                        if showFeedback {
+                            if isCorrect {
+                                correctView
+                            }
+                        }
+                    }
+                    answerFieldPrompt
+                }
+            }
+            .padding()
+            
+            Spacer()
+            checkAnswerOrNextButton
+            Spacer()
+            
+            
+            //            MARK: - Navigation
+                .navigationTitle("")
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Text("\(selectedTable)x Table")
+                            .padding()
+                            .font(.title2.weight(.bold))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            // Custom action to dismiss the view
+                            dismiss()
+                        }) {
+                            Image(systemName: "multiply") // Custom icon
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.gray)
+                                .padding()
+                        }
                     }
                 }
-                .padding()
-                
-                Spacer()
-                checkAnswerOrNextButton
-                Spacer()
-
-                
-                //            MARK: - Navigation
-                    .navigationTitle("")
-                    .navigationBarBackButtonHidden(true)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Text("\(selectedTable)x Table")
-                                .padding()
-                                .font(.title2.weight(.bold))
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button(action: {
-                                // Custom action to dismiss the view
-                                dismiss()
-                            }) {
-                                Image(systemName: "multiply") // Custom icon
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundColor(.gray)
-                                    .padding()
-                            }
+            
+//            MARK: - State Changes
+                .onAppear {
+                    currentQuestion = question
+                }
+            
+                .alert(title, isPresented: $showAlert) {
+                    Button("Continue") { }
+                } message: {
+                    Text(message)
+                }
+            
+                .sheet(isPresented: $showFinalScore) {
+                    VStack {
+                        Text("Your Results")
+                        Text("Your score is \(Int(userScore))%.")
+                        Button("Dismiss") {
+                            showFinalScore.toggle()
+                            dismiss()
                         }
                     }
-                
-                
-                    .onAppear {
-                        currentQuestion = question
-                    }
-                    .alert(title, isPresented: $showAlert) {
-                        Button("Continue") { }
-                    } message: {
-                        Text(message)
-                    }
-                
-                    .alert(isPresented: $showFinalScore) {
-                                Alert(
-                                    title: Text("Your Results"),
-                                    message: Text("Your score is \(Int(userScore))%."),
-                                    dismissButton: .default(Text("OK")) {
-                                        dismiss()
-                                    }
-                                )
-                            }
-            }
+                }
+            
         }
     }
+    
+    
     //    MARK: - Custom Views
     
     private var cardView: some View {
@@ -180,14 +183,16 @@ struct MathView: View {
             .textFieldStyle(.roundedBorder)
             .font(.system(size: 50))
             .padding()
-        
+            .onChange(of: answer) {
+                isButtonDisabled = answer.isEmpty
+            }
     }
     
     private var answerFieldPrompt: some View {
         Text("Enter your answer")
             .foregroundColor(.secondary)
             .font(.title3.smallCaps().weight(.heavy))
-            .opacity(0.4)
+            .opacity(0.5)
     }
     
     private var checkAnswerOrNextButton: some View {
@@ -195,8 +200,13 @@ struct MathView: View {
             if isQuestionAnswered {
                 nextQuestion()
             } else {
-                checkAnswer()
-                
+                if answer.isEmpty {
+                    title = "Error"
+                    message = "Please enter your answer."
+                    showAlert = true
+                } else {
+                    checkAnswer()
+                }
                 if currentQuestionIndex == totalQuestions {
                     showAlert = false
                     showFinalScore = true
@@ -207,6 +217,7 @@ struct MathView: View {
                 .frame(width: 220, height: 60)
                 .modifier(ButtonStyle())
         }
+        .disabled(answer.isEmpty)
     }
     
     private var incorrectView: some View {
