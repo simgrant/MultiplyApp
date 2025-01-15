@@ -83,8 +83,7 @@ struct MathView: View {
                     
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
-                            // Custom action to dismiss the view
-                            dismiss()
+                            dismiss() //dismiss the view
                         }) {
                             Image(systemName: "multiply") // Custom icon
                                 .resizable()
@@ -104,7 +103,7 @@ struct MathView: View {
                 .alert(title, isPresented: $showAlert) {
                     Button("Continue") {
                         if currentQuestionIndex == totalQuestions {
-                            showFinalScore = true
+                            isPracticeOver()
                         } else {
                             nextQuestion()
                         }
@@ -115,12 +114,21 @@ struct MathView: View {
             
                 .sheet(isPresented: $showFinalScore) {
                     VStack {
-                        Text("Results")
+                        Text(userScore > 75 ? "Great Job!" : "Keep Practicing!")
+                                .font(.largeTitle.weight(.heavy))
+                        Image(userScore > 75 ? "hooray" : "try_again")
+                            .resizable()
+                            .frame(width: 300, height: 300, alignment: .center)
                         Text("Your score is \(Int(userScore))%.")
+                            .font(.title.weight(.medium))
+                            .padding(.bottom)
                         Button("Dismiss") {
                             showFinalScore.toggle()
                             dismiss()
                         }
+                            .frame(width: 220, height: 60)
+                            .modifier(ButtonStyle())
+                            .padding()
                     }
                 }
             
