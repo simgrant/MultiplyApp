@@ -10,13 +10,12 @@ import SwiftUI
 struct ContentView: View {
     @State private var selectedColor = Color(lightBlue)
     @State private var image = "2"
-    @State private var selectedTable = 2
+    @State private var selectedTable = 2 
     
     
     var body: some View {
         NavigationStack {
             ZStack {
-//                pastelGradient
                 Color.white
                 .ignoresSafeArea()
                 rectangle
@@ -26,7 +25,6 @@ struct ContentView: View {
                         circleView
                         circleImage
                     }
-//                    .padding()
                     
                     Spacer()
                     headerView
@@ -35,8 +33,7 @@ struct ContentView: View {
                     ColorView(selectedColor: $selectedColor, image: $image, selectedTable: $selectedTable)
                         .padding()
 
-                    
-                    NavigationLink(destination: MathView(selectedTable: selectedTable)) {
+                    NavigationLink(destination: MathView(selectedTable: $selectedTable)) {
                         startButton
                     }
                     Spacer()
@@ -92,12 +89,6 @@ struct ContentView: View {
         Button("Start") {}
             .frame(maxWidth: UIScreen.main.bounds.width / 2 , minHeight: 30)
             .modifier(ButtonStyle())
-    }
-    
-    
-    //    MARK: - Background Color
-    private var backgroundColor: Color {
-        Color(red: 246/255, green: 246/255, blue: 246/255)
     }
     
 }

@@ -9,15 +9,15 @@ import SwiftUI
 
 struct MathView: View {
     @Environment(\.dismiss) var dismiss
-    let selectedTable: Int
+    @Binding var selectedTable: Int
     let totalQuestions = 2
     
-    @State private var currentQuestionIndex = 0
+    @State private var currentQuestionIndex = 1
     @State private var answer = ""
     @State private var isCorrect = false
     @State private var correctAnswers = 0
-    @State private var userScore = 0
-    @State private var currentQuestion: Question? = nil
+    @State private var userScore: Double = 0
+    @State private var currentQuestion: Question?
     @State private var showAlert = false
     @State private var showFeedback = false
     @State private var showFinalScore = false
@@ -30,37 +30,11 @@ struct MathView: View {
         return Question(multiplicand: selectedTable, multiplier: Int.random(in: 2...12))
     }
     
-    func checkAnswer() {
-        if let userAnswer = Int(answer), userAnswer == currentQuestion?.product {
-            correctAnswers += 1
-            isCorrect = true
-            showAlert = false
-        } else {
-            title = "Incorrect"
-            message = "The answer is \(currentQuestion?.product ?? 0)"
-            isCorrect = false
-            showAlert = true
-        }
-        showFeedback = true
-        isQuestionAnswered = true
-    }
     
-    func nextQuestion() {
-        isQuestionAnswered = false
-        showFeedback = false
-        currentQuestion = question
-        currentQuestionIndex += 1
-        userScore = (correctAnswers / currentQuestionIndex) * 100
-        answer = ""
-    }
-    
+// MARK: - Body
     var body: some View {
         VStack {
-            ProgressView("", value: Double(currentQuestionIndex), total: Double(totalQuestions))
-                .progressViewStyle(.linear)
-                .frame(height: 20)
-                .accentColor(Color(lightBlue))
-                .padding()
+            progressView
             Spacer()
             
             ZStack {
@@ -84,7 +58,9 @@ struct MathView: View {
                             }
                         }
                     }
-                    answerFieldPrompt
+                    if !isQuestionAnswered {
+                        answerFieldPrompt
+                    }
                 }
             }
             .padding()
@@ -121,18 +97,25 @@ struct MathView: View {
             
 //            MARK: - State Changes
                 .onAppear {
+                    randomizeSelectedTable()
                     currentQuestion = question
                 }
             
                 .alert(title, isPresented: $showAlert) {
-                    Button("Continue") { }
+                    Button("Continue") {
+                        if currentQuestionIndex == totalQuestions {
+                            showFinalScore = true
+                        } else {
+                            nextQuestion()
+                        }
+                    }
                 } message: {
                     Text(message)
                 }
             
                 .sheet(isPresented: $showFinalScore) {
                     VStack {
-                        Text("Your Results")
+                        Text("Results")
                         Text("Your score is \(Int(userScore))%.")
                         Button("Dismiss") {
                             showFinalScore.toggle()
@@ -145,7 +128,59 @@ struct MathView: View {
     }
     
     
+    
+    // MARK: - Functions
+        func checkAnswer() {
+            if let userAnswer = Int(answer), userAnswer == currentQuestion?.product {
+                correctAnswers += 1
+                isCorrect = true
+                showAlert = false
+            } else {
+                title = "Incorrect"
+                message = "The answer is \(currentQuestion?.product ?? 0)"
+                isCorrect = false
+                showAlert = true
+            }
+            showFeedback = true
+            isQuestionAnswered = true
+        }
+        
+        func nextQuestion() {
+            isPracticeOver()
+            //keep track of user input
+            isQuestionAnswered = false
+            //hide feedback view
+            showFeedback = false
+            //load next question & score
+            currentQuestion = question
+            currentQuestionIndex += 1
+            //reset textfield
+            answer = ""
+        }
+        
+        func randomizeSelectedTable() {
+            selectedTable = selectedTable == 13 ? Int.random(in: 2...12) : selectedTable
+        }
+        
+        func isPracticeOver() {
+            if currentQuestionIndex == totalQuestions {
+                userScore = (Double(correctAnswers) / Double(totalQuestions)) * 100
+                showFinalScore = true
+            }
+        }
+
+        
+    
+    
     //    MARK: - Custom Views
+    
+    private var progressView: some View {
+        ProgressView("", value: Double(currentQuestionIndex - 1), total: Double(totalQuestions))
+            .progressViewStyle(.linear)
+            .frame(height: 20)
+            .accentColor(Color(lightBlue))
+            .padding()
+    }
     
     private var cardView: some View {
         Rectangle()
@@ -183,9 +218,6 @@ struct MathView: View {
             .textFieldStyle(.roundedBorder)
             .font(.system(size: 50))
             .padding()
-            .onChange(of: answer) {
-                isButtonDisabled = answer.isEmpty
-            }
     }
     
     private var answerFieldPrompt: some View {
@@ -200,22 +232,20 @@ struct MathView: View {
             if isQuestionAnswered {
                 nextQuestion()
             } else {
-                if answer.isEmpty {
-                    title = "Error"
-                    message = "Please enter your answer."
-                    showAlert = true
-                } else {
                     checkAnswer()
                 }
-                if currentQuestionIndex == totalQuestions {
-                    showAlert = false
-                    showFinalScore = true
-                }
-            }
         }) {
-            Text(isQuestionAnswered ? "Next Question": "Check Answer")
-                .frame(width: 220, height: 60)
-                .modifier(ButtonStyle())
+            if currentQuestionIndex == totalQuestions {
+                Text(isQuestionAnswered ? "See Results" : "Check Answer")
+                    .frame(width: 220, height: 60)
+                    .modifier(ButtonStyle())
+                    .opacity(!answer.isEmpty ? 1 : 0.5)
+            } else {
+                Text(isQuestionAnswered ? "Next Question" : "Check Answer")
+                    .frame(width: 220, height: 60)
+                    .modifier(ButtonStyle())
+                    .opacity(!answer.isEmpty ? 1 : 0.5)
+            }
         }
         .disabled(answer.isEmpty)
     }

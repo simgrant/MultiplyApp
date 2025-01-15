@@ -28,18 +28,6 @@ struct ButtonStyle: ViewModifier {
     }
 }
 
-var pastelGradient: LinearGradient {
-    LinearGradient(
-        gradient: Gradient(colors: [
-            Color.pink.opacity(0.3),
-            Color.blue.opacity(0.3),
-            Color.yellow.opacity(0.3)
-        ]),
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-}
-
 var rectangle: some View {
     Rectangle()
         .fill(Color.white.opacity(0.6))

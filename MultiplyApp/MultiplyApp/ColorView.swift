@@ -36,7 +36,6 @@ struct ColorView: View {
                             .resizable()
                             .frame(width: 45, height: 45, alignment: .center)
                             .modifier(NumberImage())
-//                            .shadow(radius: 5)
                             
                         
                             .onTapGesture {
