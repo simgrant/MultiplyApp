@@ -10,7 +10,8 @@ import SwiftUI
 struct MathView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var selectedTable: Int
-    let totalQuestions = 2
+    @Binding var selectionMade: Bool
+    let totalQuestions = 15
     
     @State private var currentQuestionIndex = 1
     @State private var answer = ""
@@ -25,6 +26,7 @@ struct MathView: View {
     @State private var message = ""
     @State private var isQuestionAnswered = false
     @State private var isButtonDisabled = true
+    
     
     var question: Question {
         return Question(multiplicand: selectedTable, multiplier: Int.random(in: 2...12))
@@ -84,6 +86,8 @@ struct MathView: View {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
                             dismiss() //dismiss the view
+                            selectedTable = 0
+                            selectionMade = false
                         }) {
                             Image(systemName: "multiply") // Custom icon
                                 .resizable()
@@ -119,7 +123,7 @@ struct MathView: View {
                         Image(userScore > 75 ? "hooray" : "try_again")
                             .resizable()
                             .frame(width: 300, height: 300, alignment: .center)
-                        Text("Your score is \(Int(userScore))%.")
+                        Text("You scored \(Int(userScore))%")
                             .font(.title.weight(.medium))
                             .padding(.bottom)
                         Button("Dismiss") {
@@ -249,7 +253,7 @@ struct MathView: View {
                     .modifier(ButtonStyle())
                     .opacity(!answer.isEmpty ? 1 : 0.5)
             } else {
-                Text(isQuestionAnswered ? "Next Question" : "Check Answer")
+                Text(isQuestionAnswered ? "Next" : "Check Answer")
                     .frame(width: 220, height: 60)
                     .modifier(ButtonStyle())
                     .opacity(!answer.isEmpty ? 1 : 0.5)

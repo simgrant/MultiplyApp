@@ -20,11 +20,22 @@ struct ButtonStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding()
-            .background(Color(lavender))
+            .background(Color(buttonColor))
             .foregroundColor(.white)
             .font(.title.weight(.bold).smallCaps())
             .cornerRadius(20)
-            .shadow(radius: 3)
+            .shadow(radius: 5)
+    }
+}
+
+struct InstructionView: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding(10)
+            .cornerRadius(10)
+            .font(.title2.weight(.heavy).lowercaseSmallCaps())
+            .foregroundColor(.gray)
+            .opacity(0.9)
     }
 }
 

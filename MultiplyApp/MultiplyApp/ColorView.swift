@@ -11,8 +11,9 @@ struct ColorView: View {
     @Binding var selectedColor: Color
     @Binding var image: String
     @Binding var selectedTable: Int
+    @Binding var selectionMade: Bool
     
-    let colors: [Color] = [Color(lightBlue), Color(pastelPink), Color(mustard), Color(lavender), Color(peachyRose), Color(softYellow), Color(brownRose), Color(peranoBlue), Color(peranoPurple), Color(charm), Color(casper), Color(butterfly)]
+    let colors: [Color] = [Color(azalea), Color(cottonCandy), Color(bilobaFlower), Color(tropicalBlue), Color(malibu), Color(melanie), Color(solitude), Color(jordyBlue), Color(aquamarine), Color(prim), Color(perfume), Color(lavender)]
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -22,19 +23,20 @@ struct ColorView: View {
     
     var body: some View {
         HStack {
-            LazyVGrid(columns: columns, spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 10) {
                 ForEach(colors, id: \.self) { color in
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
+//                        Circle()
                             .fill(color)
                             .frame(width: 70, height: 70)
                             .shadow(radius: 3)
-                            .opacity(0.5)
+                            .opacity(0.7)
                             
                         
                         Image("\(colors.firstIndex(of: color)! + 2)")
                             .resizable()
-                            .frame(width: 45, height: 45, alignment: .center)
+                            .frame(width: 40, height: 40, alignment: .center)
                             .modifier(NumberImage())
                             
                         
@@ -42,6 +44,7 @@ struct ColorView: View {
                                 selectedColor = color
                                 image = "\(colors.firstIndex(of: color)! + 2)"
                                 selectedTable = colors.firstIndex(of: color)! + 2
+                                selectionMade = true
                             }
                     }
                 }

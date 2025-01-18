@@ -10,58 +10,58 @@ import SwiftUI
 //RGB Color Set
 
 var lightBlue: Color {
-    Color(red: 162/255, green: 223/255, blue: 247/255)
+    Color(red: 166/255, green: 222/255, blue: 252/255)
 }
 
-var pastelPink: Color {
-    Color(red: 255/255, green: 179/255, blue: 186/255)
+var azalea: Color {
+    Color(red: 255/255, green: 200/255, blue: 221/255)
+}
+
+var cottonCandy: Color {
+    Color(red: 255/255, green: 175/255, blue: 204/255)
+}
+
+var bilobaFlower: Color {
+    Color(red: 189/255, green: 178/255, blue: 255/255)
+}
+
+var tropicalBlue: Color {
+    Color(red: 189/255, green: 224/255, blue: 254/255)
+}
+
+var malibu: Color {
+    Color(red: 162/255, green: 210/255, blue: 255/255)
+}
+
+var melanie: Color {
+    Color(red: 236/255, green: 2-3/255, blue: 217/255)
+}
+
+var solitude: Color {
+    Color(red: 225/255, green: 239/255, blue: 246/255)
+}
+
+var jordyBlue: Color {
+    Color(red: 131/255, green: 188/255, blue: 255/255)
+}
+
+var aquamarine: Color {
+    Color(red: 128/255, green: 255/255, blue: 232/255)
+}
+
+var prim: Color {
+    Color(red: 241/255, green: 227/255, blue: 243/255)
+}
+
+
+var perfume: Color {
+    Color(red: 194/255, green: 187/255, blue: 240/255)
+}
+    
+var lavender: Color {
+    Color(red: 222/255, green: 197/255, blue: 227/255)
 }
 
 var buttonColor: Color {
-    Color(red: 248/255, green: 180/255, blue: 0/255)
-}
-
-var mustard: Color {
-    Color(red: 248/255, green: 180/255, blue: 0/255)
-}
-
-var peachyRose: Color {
-    Color(red: 255/255, green: 103/255, blue: 125/255)
-}
-
-var lavender: Color {
-    Color(red: 146/255, green: 168/255, blue: 209/255)
-}
-
-var pale: Color {
-    Color(red: 246/255, green: 246/255, blue: 246/255)
-}
-
-var softYellow: Color {
-    Color(red: 246/255, green: 229/255, blue: 141/255)
-}
-
-var brownRose: Color {
-    Color(red: 212/255, green: 165/255, blue: 165/255)
-}
-
-var charm: Color {
-    Color(red: 215/255, green: 106/255, blue: 137/255)
-}
-
-var peranoBlue: Color {
-    Color(red: 167/255, green: 211/255, blue: 241/255)
-}
-
-
-var peranoPurple: Color {
-    Color(red: 168/255, green: 162/255, blue: 241/255)
-}
-    
-var butterfly: Color {
-    Color(red: 107/255, green: 80/255, blue: 139/255)
-}
-
-var casper: Color {
-    Color(red: 164/255, green: 196/255, blue: 208/255)
+    Color(red: 62/255, green: 172/255, blue: 232/255)
 }
